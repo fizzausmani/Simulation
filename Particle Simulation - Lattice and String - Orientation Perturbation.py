@@ -451,7 +451,7 @@ for n in range(0, steps, 1000):
     
     plt.title('%3d' %(n*dt))
 
-    # plt.pause(0.001)
+    # plt.pause(0.1)
     plt.savefig(save_path_plots + str(n) + ' N'  + str(N) + '.png')
 
 #%% Code for adding kinematic periodicity
