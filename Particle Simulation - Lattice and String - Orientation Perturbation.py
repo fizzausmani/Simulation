@@ -485,20 +485,20 @@ def mi(main):
 temp_pos should be added in the first particle loop, and 
 pos should be added in the second particle loop. """ 
 
-        if temp_pos[0,i] > (a/2):
-            temp_pos[0,i] += -a
-        elif temp_pos[1,i] > (a/2):
-            temp_pos[1,i] += -a
-        elif temp_pos[0,i] < -(a/2):
-            temp_pos[0,i] += a
-        elif temp_pos[1,i] < -(a/2):
-            temp_pos[1,i] += a
+        # if temp_pos[0,i] > (a/2):
+        #     temp_pos[0,i] += -a
+        # elif temp_pos[1,i] > (a/2):
+        #     temp_pos[1,i] += -a
+        # elif temp_pos[0,i] < -(a/2):
+        #     temp_pos[0,i] += a
+        # elif temp_pos[1,i] < -(a/2):
+        #     temp_pos[1,i] += a
 
-        if pos[0,i,n+1] > (a/2):
-            pos[0,i,n+1] += -a
-        elif pos[1,i,n+1] > (a/2):
-            pos[1,i,n+1] += -a
-        elif pos[0,i,n+1] < -(a/2):
-            pos[0,i,n+1] += a
-        elif pos[1,i,n+1] < -(a/2):
-            pos[1,i,n+1] += a
+        # if pos[0,i,n+1] > (a/2):
+        #     pos[0,i,n+1] += -a
+        # elif pos[1,i,n+1] > (a/2):
+        #     pos[1,i,n+1] += -a
+        # elif pos[0,i,n+1] < -(a/2):
+        #     pos[0,i,n+1] += a
+        # elif pos[1,i,n+1] < -(a/2):
+        #     pos[1,i,n+1] += a
