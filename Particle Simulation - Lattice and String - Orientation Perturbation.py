@@ -24,6 +24,9 @@ import scipy.interpolate as interp
 import datetime
 
 #%% Defining parameters
+# OS = 'M' # 'M' for Mac, 'W' for Windows
+OS = 'W' 
+
 T = 5000
 dt = 0.05
 steps = int(T/dt)
@@ -55,11 +58,12 @@ if sd == 1000 or sd == 100:
     di = np.logspace(-7, 0, 100000)
 elif sd == 10:
     di = np.logspace(-5, 3, 100000)
-
 elif sd == 1:
     di = np.logspace(-3, 5, 100000)
 elif sd == 0.1:
     di = np.logspace(-2, 7, 100000)
+elif sd == 0.01:
+    di = np.logspace(-1, 9, 100000)
 
 if system == 'F':
     Ar_f = np.pi*(struve(0,di)-struve(1,di)/di+2/(np.pi*di**2)-(yn(0,di)-yn(2,di))/2)
@@ -136,8 +140,10 @@ elif test_system == 'L':
             str(sd) + ' isotropic'
 
 """ Specify save path below. """
-# save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/'
-save_path = 'C:\\Users\\fusmani\\Box\\Research\\Python\\Stability Analysis\\'
+if OS == 'M':
+    save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/'
+elif OS == 'W':
+    save_path = 'C:\\Users\\fusmani\\Box\\Research\\Python\\Stability Analysis\\'
 
 # %% Functions for translational and rotational velocities
 
@@ -311,9 +317,6 @@ def dp_particle(pos,p):
     
     ux_st = ux + Ust_x
     uy_st = uy + Ust_y
-    
-    # ux = (np.dot(C11,F*px) + np.dot(C12,F*py))/(4*np.pi)
-    # uy = (np.dot(C22,F*py) + np.dot(C21,F*px))/(4*np.pi)
 
     pdot = np.zeros([2,N])
 
@@ -374,8 +377,8 @@ for n in range(0, steps):
     
     """ The velocities are saved at every time T instead of every timestep. """
     if n in t_save:
-        u[:,:,math.floor(n*dt)] = np.array([(ux_st + ux_st_temp)/2,\
-                                            (uy_st + uy_st_temp)/2])
+        u[:,:,math.floor(n*dt)] = np.array([(ux + ux_temp)/2,\
+                                            (uy + uy_temp)/2])
         dp[:,:,math.floor(n*dt)] = np.array([p_particle + p_particle_temp])/2
        
     progress = (n*dt)/T*100
@@ -423,7 +426,6 @@ bands = int(np.sqrt(N))
 
 def plotlines(n,N):
     bands = int(np.sqrt(N))
-    
     for i in range(0,bands+1):
         plt.plot(pos[0, i*bands:(i+1)*bands, n], pos[1, i*bands:(i+1)*bands, n])
 
