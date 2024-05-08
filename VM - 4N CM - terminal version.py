@@ -52,7 +52,7 @@ y = np.linspace(-a/2, a/2, z)
 X,Y = np.meshgrid(x, y)
 dx = x[1] - x[0]
 
-saving_string = system + 'M MP T' + str(T) + ' N' + str(N) + ' sd' + str(sd)
+saving_string = system + 'M T' + str(T) + ' N' + str(N) + ' sd' + str(sd)
 
 if sd == 1000:
     di = np.logspace(-7, 0, 100000)
