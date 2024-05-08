@@ -389,7 +389,7 @@ for n in range(0, steps):
         np.save(save_path + saving_string + ' pos', pos)
         np.save(save_path + saving_string + ' p', p)
 
-end_time=time()
+end_time = time()
 elapsed_time = end_time-start_time
 
 #%% Saving routin
@@ -414,7 +414,6 @@ df.to_csv(save_path + saving_string + ' ic.csv', index = False)
 
 # %% Plotting
 """ Specify save path below. """
-
 save_path_plots = '/Users/fizzausmani/Downloads/Lattice/N625/'
 
 if test_system == 'S':
