@@ -6,7 +6,6 @@ import math
 from time import time
 
 #%% Importing positions and velocities
-
 pos = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/10x10/0/CM MP T1000 N8 sd0.1 pos.npy')
 ux = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/10x10/0/CM MP T1000 N8 sd0.1 ux.npy')
 uy = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/10x10/0/CM MP T1000 N8 sd0.1 uy.npy')
@@ -23,7 +22,6 @@ z = int(ic.loc[5][1])
 x = np.linspace(-a/2, a/2, z)
 y = np.linspace(-a/2, a/2, z)
 X,Y = np.meshgrid(x, y)
-dx = x[1] - x[0]
 
 system = ic.loc[7][1]
 sd = float(ic.loc[8][1])
@@ -48,7 +46,6 @@ y_g = y_g[:,np.newaxis]*np.ones([N*2*9])
 
 ux_h = np.zeros([z, z, steps_truncated+1])
 uy_h = np.zeros([z, z, steps_truncated+1])
-
 
 def mi(main):
     mi = np.zeros([2,N*8])
@@ -103,7 +100,6 @@ def u_extraction(ux, uy, pos):
 
     return ux_h, uy_h
 
-
 start_time=time()
 
 for n in range(0, T):
@@ -114,76 +110,5 @@ elapsed_time = end_time - start_time
 
 #%%
 saving_string = system + 'M MP T' + str(T) + ' N' + str(N) + ' sd' + str(sd)
-
 np.save(save_path + saving_string + ' ux_h', ux_h)
 np.save(save_path + saving_string + ' uy_h', uy_h)
-
-# %% Plotting
-
-plot = 'Q'
-# plot = 'S'
-
-figure, axes = plt.subplots(figsize=(10,8))
-
-# vmin = 0
-# vmax = 1
-levels = np.linspace(0.0, 0.2, 7)
-
-# n = 8
-# if n == 8:
-for n in range(0, 10):
-    plt.cla()
-    for i in range(N):
-        umag = np.sqrt(ux_new[:,:,n]**2 + uy_new[:,:,n]**2)
-        
-        axes.set_aspect(1)
-        
-        circle = plt.Circle((pos_truncated[0,i,n], pos_truncated[1,i,n]), 0.5,
-                            edgecolor = 'k', facecolor = 'Gainsboro', zorder = 10)
-        
-        axes.arrow(pos_truncated[0,i,n], pos_truncated[1,i,n], p_truncated[0,i,n]/2,\
-                   p_truncated[1,i,n]/2, head_width=0.1, head_length=0.1,\
-                       fc='k', ec='k', zorder = 11)
-        axes.arrow(pos_truncated[0,i,n], pos_truncated[1,i,n], -p_truncated[0,i,n]/2,\
-                   -p_truncated[1,i,n]/2, head_width=0.1, head_length=0.1,\
-                       fc='k', ec='k', zorder = 11)
-        
-        s = 5 #spacer
-
-        if plot == 'Q':
-            CS = axes.contourf(x,y,umag, levels = levels, cmap = 'twilight_r', zorder  = 1)
-            # axes.quiver(X[::s,::s], Y[::s,::s], ux[::s,::s,n], uy[::s,::s,n],\
-            #             pivot = 'mid', scale = 2)
-            
-        elif plot == 'S':
-            CS = axes.contourf(x,y,umag, 200, cmap = 'twilight_r', zorder  = 1)
-            plt.streamplot(X[::s,::s], Y[::s,::s], ux[::s,::s,n], uy[::s,::s,n],\
-                           color = 'k')
-            
-        axes.add_artist(circle)
-        
-    if n == 0:
-        cbar = figure.colorbar(CS, pad = 0.08)
-    else:
-        # cbar.update_normal(CS)
-        cbar.update_ticks()
-        
-    cbar.ax.set_ylabel('Velocity')
-    
-    axes.axis([-a/2, a/2, -a/2, a/2])
-    axes.tick_params(top = True, labeltop = True, right = True, labelright = True)
-    
-    plt.title('%3d' %(n))
-    plt.pause(0.001)
-    # plt.savefig(str(n) + '.png', bbox_inches = 'tight', dpi = 300)
-    
-    progress = (n)/T*100
-    if progress in np.linspace(0,100,21):
-        print('Progress is ' + str(progress) + '%')
-        
-        #%%
-rmag_t = np.linspace(0,5,1000)
-Us_t = Us*((np.exp(-beta*(rmag_t - D)))/(1+np.exp(-beta*(rmag_t - D))))
-
-plt.plot(rmag_t, Us_t)
-plt.show()
