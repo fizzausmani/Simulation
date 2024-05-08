@@ -6,6 +6,7 @@ os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
 os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
+#%%
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.special import yn, kn, struve
