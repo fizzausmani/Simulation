@@ -8,18 +8,20 @@ import glob as glob
 import os
 
 #%% Importing concentration data
-path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/0/Mixing'
-preamble = 'AD RK4 T1000 dt0.05 SP4 '
-pattern = preamble + '*.npy'
+path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/sd1000'
+pattern = 'AD RK4 T1000 dt0.05 SP4 FM conc seed*.npy'
+preamble = 'AD RK4 T1000 dt0.05 SP4 FM conc seed'
+# pattern = preamble + '*.npy'
 c = glob.glob(f'{path}/{pattern}')
 arrays =  {os.path.basename(file): np.load(file) for file in c}
 
 #%%
-c1 = arrays[preamble + 'FM sd1000 conc.npy']
-c2 = arrays[preamble + 'FM sd10 conc.npy']
-c3 = arrays[preamble + 'FM sd1 conc.npy']
-c4 = arrays[preamble + 'FM sd0.1 conc.npy']
-c5 = arrays[preamble + 'CM sd0.1 conc.npy']
+c1 = arrays[preamble + '0.npy']
+c2 = arrays[preamble + '1.npy']
+c3 = arrays[preamble + '2.npy']
+c4 = arrays[preamble + '3.npy']
+c5 = arrays[preamble + '4.npy']
+c6 = arrays[preamble + '5.npy']
 
 #%% Initiation
 steps1 = 1000
