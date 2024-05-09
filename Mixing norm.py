@@ -8,20 +8,20 @@ import glob as glob
 import os
 
 #%% Importing concentration data
-path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/sd1000'
-pattern = 'AD RK4 T1000 dt0.05 SP4 FM conc seed*.npy'
-preamble = 'AD RK4 T1000 dt0.05 SP4 FM conc seed'
-# pattern = preamble + '*.npy'
-c = glob.glob(f'{path}/{pattern}')
-arrays =  {os.path.basename(file): np.load(file) for file in c}
+path_f1000 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/sd1000'
+path_f10 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/sd10'
+path_f1 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/sd1'
+path_f01 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/fsd01'
+path_c01 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/csd01'
+path_c1 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/Mixing/csd1'
 
-#%%
-c1 = arrays[preamble + '0.npy']
-c2 = arrays[preamble + '1.npy']
-c3 = arrays[preamble + '2.npy']
-c4 = arrays[preamble + '3.npy']
-c5 = arrays[preamble + '4.npy']
-c6 = arrays[preamble + '5.npy']
+preamble = 'AD RK4 T1000 dt0.05 SP4 FM conc seed'
+pattern = preamble + '*.npy'
+c_f1000 = glob.glob(f'{path_f1000}/{pattern}')
+c_f10 = glob.glob(f'{path_f10}/{pattern}')
+c_f1 = glob.glob(f'{path_f1}/{pattern}')
+c_f01 = glob.glob(f'{path_f01}/{pattern}')
+c_c01 = glob.glob(f'{path_c01}/{pattern}')
 
 #%% Initiation
 steps1 = 1000
@@ -94,12 +94,21 @@ def trinorm(conc1, conc2, conc3, steps, a, z):
 
     return s
 
-def multinorm(conc1, conc2, conc3, conc4, conc5, steps, a, z):
+def multinorm(conc_path, steps, a, z):
+    conc_dic = {os.path.basename(file): np.load(file) for file in conc_path}
+    c1 = conc_dic[preamble + '0.npy']
+    c2 = conc_dic[preamble + '1.npy']
+    c3 = conc_dic[preamble + '2.npy']
+    c4 = conc_dic[preamble + '3.npy']
+    c5 = conc_dic[preamble + '4.npy']
+    c6 = conc_dic[preamble + '5.npy']
+
     s1 = np.zeros(steps)#, dtype = complex)
     s2 = np.zeros(steps)#, dtype = complex)
     s3 = np.zeros(steps)#, dtype = complex)
     s4 = np.zeros(steps)#, dtype = complex)
     s5 = np.zeros(steps)#, dtype = complex)
+    s6 = np.zeros(steps)#, dtype = complex)
 
     kx = np.linspace(0,z,z)/a
     ky = np.linspace(0,z,z)/a
@@ -107,31 +116,36 @@ def multinorm(conc1, conc2, conc3, conc4, conc5, steps, a, z):
 
     times = np.arange(0,steps,1)
     for n in times:
-        fft_conc1 = fft2(conc1[:,:,n])
-        fft_conc2 = fft2(conc2[:,:,n])
-        fft_conc3 = fft2(conc3[:,:,n])
-        fft_conc4 = fft2(conc4[:,:,n])
-        fft_conc5 = fft2(conc5[:,:,n])
+        fft_c1 = fft2(c1[:,:,n])
+        fft_c2 = fft2(c2[:,:,n])
+        fft_c3 = fft2(c3[:,:,n])
+        fft_c4 = fft2(c4[:,:,n])
+        fft_c5 = fft2(c5[:,:,n])
+        fft_c6 = fft2(c6[:,:,n])
 
-        s1[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_conc1))**2))
-        s2[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_conc2))**2))
-        s3[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_conc3))**2))
-        s4[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_conc4))**2))
-        s5[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_conc5))**2))
+        s1[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_c1))**2))
+        s2[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_c2))**2))
+        s3[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_c3))**2))
+        s4[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_c4))**2))
+        s5[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_c5))**2))
+        s6[n] = np.sqrt(np.sum((1/np.sqrt(1+(4*np.pi**2)*(KX**2+KY**2)))*np.abs((fft_c6))**2))
 
     s1 = s1/s1[0]
     s2 = s2/s2[0]
     s3 = s3/s3[0]
-    s = (s1 + s2 + s3)/3
+    s4 = s4/s4[0]
+    s5 = s5/s5[0]
+    s6 = s6/s6[0]
+    s = np.average((s1, s2, s3, s4, s5, s6), axis = 0)
 
     return s
 
 #%%
-s_F4_l1000 = norm(c1, steps1, a2, z2)
-s_F4_l10 = norm(c2, steps1, a2, z2)
-s_F4_l1 = norm(c3, steps1, a2, z2)
-s_F4_l01 = norm(c4, steps1, a2, z2)
-s_C4_l01 = norm(c5, steps1, a1, z2)
+s_F4_l1000 = norm(c_f1000, steps1, a2, z2)
+s_F4_l10 = norm(c_f10, steps1, a2, z2)
+s_F4_l1 = norm(c_f1, steps1, a2, z2)
+s_F4_l01 = norm(c_f01, steps1, a2, z2)
+s_C4_l01 = norm(c_c01, steps1, a1, z2)
 
 #%%
 plt.cla()
