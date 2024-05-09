@@ -8,8 +8,24 @@ import glob as glob
 
 #%% Importing concentration data
 path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/0/Mixing'
-pattern = '*.npy'
-conc = glob.glob(f'{path}/{pattern}')
+pattern = 'AD RK4 T1000 dt0.05 SP4 *.npy'
+c = glob.glob(f'{path}/{pattern}')
+
+#%%
+def create_arrays(n, z):
+    arrays = []
+    for i in range(n):
+        new_array = np.zeros((z, z, 2))  # Create a new array of shape (z, z, 2) filled with zeros
+        arrays.append(new_array)  # Add the new array to the list of arrays
+    return arrays if n > 1 else arrays[0]
+
+# Example usage:
+n = len(c)
+z = 200
+conc = create_arrays(n, z)
+
+for i in range(n):
+    conc[i] = np.load(c[i])
 
 #%% Initiation
 steps1 = 1000
