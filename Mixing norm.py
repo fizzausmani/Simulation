@@ -5,43 +5,33 @@ from scipy.fft import fft2
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 import glob as glob
+import os
 
 #%% Importing concentration data
 path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/0/Mixing'
 pattern = 'AD RK4 T1000 dt0.05 SP4 *.npy'
+preamble = 'AD RK4 T1000 dt0.05 SP4 '
 c = glob.glob(f'{path}/{pattern}')
-
+arrays =  {os.path.basename(file): np.load(file) for file in c}
 #%%
-def create_arrays(n, z):
-    arrays = []
-    for i in range(n):
-        new_array = np.zeros((z, z, 2))  # Create a new array of shape (z, z, 2) filled with zeros
-        arrays.append(new_array)  # Add the new array to the list of arrays
-    return arrays if n > 1 else arrays[0]
-
-# Example usage:
-n = len(c)
-z = 200
-conc = create_arrays(n, z)
-
-for i in range(n):
-    conc[i] = np.load(c[i])
+c1 = arrays[preamble + 'FM sd1000 conc.npy']
+c2 = arrays[preamble + 'FM sd10 conc.npy']
+c3 = arrays[preamble + 'FM sd1 conc.npy']
+c4 = arrays[preamble + 'FM sd0.1 conc.npy']
+c5 = arrays[preamble + 'CM sd0.1 conc.npy']
 
 #%% Initiation
 steps1 = 1000
 T1 = 1000
 a1 = 10
 a2 = 20
+z1 = 100
+z2 = 200
 times = np.arange(0,steps1,1)
 
 #%% Norm functions
-def norm(conc, steps, a):
+def norm(conc, steps, a, z):
     s = np.zeros(steps)#, dtype = complex)
-
-    if a == 10:
-        z = 100
-    elif a == 20:
-        z = 200
 
     kx = np.linspace(0,z,z)/a
     ky = np.linspace(0,z,z)/a
@@ -55,14 +45,9 @@ def norm(conc, steps, a):
 
     return s
 
-def binorm(conc1, conc2, steps, a):
+def binorm(conc1, conc2, steps, a, z):
     s1 = np.zeros(steps)#, dtype = complex)
     s2 = np.zeros(steps)#, dtype = complex)
-
-    if a == 10:
-        z = 100
-    elif a == 20:
-        z = 200
 
     kx = np.linspace(0,z,z)/a
     ky = np.linspace(0,z,z)/a
@@ -81,15 +66,10 @@ def binorm(conc1, conc2, steps, a):
 
     return s
 
-def trinorm(conc1, conc2, conc3, steps, a):
+def trinorm(conc1, conc2, conc3, steps, a, z):
     s1 = np.zeros(steps)#, dtype = complex)
     s2 = np.zeros(steps)#, dtype = complex)
     s3 = np.zeros(steps)#, dtype = complex)
-
-    if a == 10:
-        z = 100
-    elif a == 20:
-        z = 200
 
     kx = np.linspace(0,z,z)/a
     ky = np.linspace(0,z,z)/a
@@ -144,47 +124,18 @@ def multinorm(conc1, conc2, conc3, conc4, conc5, steps, a, z):
     return s
 
 #%%
-s_F4_l1000_a10_1 = trinorm(F4_l1000_10x10_1, F4_l1000_10x10_2, F4_l1000_10x10_3, steps1, a2)
-s_F4_l1000_a10_2 = binorm(F4_l1000_10x10_4, F4_l1000_10x10_5, steps1, a1)
-s_F4_l1000_a10 = (s_F4_l1000_a10_1+s_F4_l1000_a10_2)/2
-
-s_F16_l1000 = multinorm(F16_l1000_1, F16_l1000_2, F16_l1000_3, F16_l1000_4, F16_l1000_5, steps1, a2)
-
-# %%
-s_F4_l10_a10_1 = trinorm(F4_l10_10x10_1, F4_l10_10x10_2, F4_l10_10x10_3, steps1, a2)
-s_F4_l10_a10_2 = binorm(F4_l10_10x10_4, F4_l10_10x10_5, steps1, a1)
-s_F4_l10_a10 = (s_F4_l10_a10_1+s_F4_l10_a10_2)/2
-
-s_F16_l10 = multinorm(F16_l10_1, F16_l10_2, F16_l10_3, F16_l10_4, F16_l10_5, steps1, a2)
-# s_F16_l10 = norm(F16_l10_1,steps1, a2)
-
-#%%
-s_F4_l1_a10_1 = trinorm(F4_l1_10x10_2, F4_l1_10x10_4, F4_l1_10x10_5, steps1, a1)
-s_F4_l1_a10_2 = norm(F4_l1_10x10_1, steps1, a2)
-s_F4_l1_a10 = (s_F4_l1_a10_1+s_F4_l1_a10_2)/2
-
-s_F16_l1 = multinorm(F16_l1_1, F16_l1_2, F16_l1_3, F16_l1_4, F16_l1_5, steps1, a2)
-
-#%%
-s_F4_l01_a10_1 = binorm(F4_l01_10x10_4, F4_l01_10x10_5, steps1, a1)
-s_F4_l01_a10_2 = norm(F4_l01_10x10_1, steps1, a2)
-s_F4_l01_a10 = (s_F4_l01_a10_1+s_F4_l01_a10_2)/2
-
-s_F16_l01 = multinorm(F16_l01_1, F16_l01_2, F16_l01_3, F16_l01_4, F16_l01_5, steps1, a2)
+s_F4_l1000 = norm(c1, steps1, a2, z2)
+s_F4_l10 = norm(c2, steps1, a2, z2)
+s_F4_l1 = norm(c3, steps1, a2, z2)
+s_F4_l01 = norm(c4, steps1, a2, z2)
+s_C4_l01 = norm(c5, steps1, a1, z2)
 
 #%%
 plt.cla()
-
-plt.plot(times, s_F4_l1000_a10, 'k-')
-plt.plot(times, s_F4_l10_a10, 'r-')
-plt.plot(times, s_F4_l1_a10, 'c-')
-plt.plot(times, s_F4_l01_a10, 'g-')
-
-
-plt.plot(times, s_F16_l1000, 'k.')
-plt.plot(times, s_F16_l10, 'r.')
-plt.plot(times, s_F16_l1, 'c.')
-plt.plot(times, s_F16_l01, 'g.')
+plt.plot(times, s_F4_l1000, 'k.')
+plt.plot(times, s_F4_l10, 'r.')
+plt.plot(times, s_F4_l1, 'c.')
+plt.plot(times, s_F4_l01, 'g.')
 
 plt.ylabel(r'$\Vert s \Vert$', fontsize = 14)
 plt.xlabel(r'$\bar{t}$', fontsize = 14)
