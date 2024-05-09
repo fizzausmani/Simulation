@@ -9,10 +9,11 @@ import os
 
 #%% Importing concentration data
 path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP4/0/Mixing'
-pattern = 'AD RK4 T1000 dt0.05 SP4 *.npy'
 preamble = 'AD RK4 T1000 dt0.05 SP4 '
+pattern = preamble + '*.npy'
 c = glob.glob(f'{path}/{pattern}')
 arrays =  {os.path.basename(file): np.load(file) for file in c}
+
 #%%
 c1 = arrays[preamble + 'FM sd1000 conc.npy']
 c2 = arrays[preamble + 'FM sd10 conc.npy']
