@@ -69,7 +69,7 @@ plt.bar([1,2,3,4,5], probability_01, edgecolor = 'k', hatch = "//", label = '$\e
 plt.legend(fontsize = f)
 plt.xlabel('Number of neighbors, N', fontsize = f)
 plt.ylabel('$p(N)$', fontsize = f)
-plt.savefig('Nearest Neighbor Analysis, N625.png', dpi = 300, bbox_inches = 'tight')
+plt.savefig('Nearest Neighbor Analysis, N625_T1500.png', dpi = 300, bbox_inches = 'tight')
 plt.show()
 
 # %%
