@@ -8,7 +8,7 @@ import seaborn as sns
 from scipy.stats import poisson, chisquare
 
 #%%
-pos_f01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/FM T5000 N625 lattice sd0.1 isotropic pos.npy')[:,:,40000]
+pos_f01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/FM T5000 N625 lattice sd0.1 isotropic pos.npy')[:,:,-1]
 pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic pos.npy')[:,:,-1]
 pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic pos.npy')[:,:,-1]
 ic = pd.read_csv('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic ic.csv')
@@ -86,7 +86,7 @@ plt.clf()
 plt.bar(x1, probability_f01, hatch ="/", label = '$FM, \ell = 0.1$', color = 'black', width = barWidth)
 plt.bar(x2, probability_01, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.1$', color = 'red', width = barWidth)
 plt.bar(x3, probability_001, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.01$', color = 'coral', width = barWidth)
-plt.legend(fontsize = f, loc = 'upper left')
+plt.legend(fontsize = f-2, loc = 'upper left')
 plt.xlabel('Number of neighbors, N', fontsize = f)
 plt.ylabel('$p(N)$', fontsize = f)
 plt.xticks([r + 0.25 for r in range(len(x1))], 
@@ -96,12 +96,12 @@ plt.show()
 
 #%% poisson fit
 mu = np.mean(counter_001)  # Poisson parameter is the mean of the data
-x = np.arange(poisson.ppf(0.001, mu), poisson.ppf(0.99, mu))
+x = np.arange(poisson.ppf(0.1, mu), poisson.ppf(0.9, mu))
 plt.cla()
-plt.plot(x, poisson.pmf(x, mu), 'r-', label='poisson pmf')
+plt.plot(x, poisson.pmf(x, mu, 1), 'r-', label='poisson pmf')
 
 # Plot your data
-plt.hist(counter_001, bins=x, density=True, alpha=0.6, color='g')
+plt.hist(counter_001, bins=5, density=True, alpha=0.6, color='g')
 
 plt.legend()
 plt.show()
@@ -116,5 +116,11 @@ expected_freq = [poisson.pmf(i, mu) * len(counter_001) for i in range(len(bins)-
 chi2, p_value = chisquare(observed_freq, f_exp=expected_freq)
 
 print(f'Chi-square statistic: {chi2}')
-print(f'p-value: {p_value}')
+print(f'p-value: {p_value}') 
+
+prob = poisson.cdf(x, mu)
+np.allclose(x, poisson.ppf(prob, mu))
 # %%
+
+import seaborn as sns
+from fitter import Fitter, get_common_distributions, get_distributions
