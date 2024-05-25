@@ -47,7 +47,11 @@ N = 8 #source particles (dipoles)
 system = 'F'
 a = 20 # box dimension
 
-z = 200
+if a == 10 and sd > 0.9:
+    z = 100
+else:
+    z = 200
+    
 x = np.linspace(-a/2, a/2, z)
 y = np.linspace(-a/2, a/2, z)
 X,Y = np.meshgrid(x, y)
