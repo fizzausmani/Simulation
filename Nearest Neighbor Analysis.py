@@ -7,16 +7,15 @@ from collections import Counter
 from scipy.stats import poisson, chisquare
 
 #%%
-pos_f01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/FM T5000 N625 lattice sd0.1 isotropic pos.npy')[:,:,-1]
-pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic pos.npy')[:,:,-1]
-pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic pos.npy')[:,:,-1]
-pos_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.01 isotropic pos.npy')[:,:,40000]
+pos_f01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/FM T5000 N625 lattice sd0.1 isotropic continued pos.npy')[:,:,-1]
+pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic continued pos.npy')[:,:,-1]
+pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued pos.npy')[:,:,-1]
+pos_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.01 isotropic continued 2 pos.npy')[:,:,-1]
 ic = pd.read_csv('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic ic.csv')
 
 N = int(ic.loc[4][1])
 
 #%%
-# for n in range(steps-3,steps):
 posf01 = np.transpose(pos_f01)
 pos01 = np.transpose(pos_01)
 pos001 = np.transpose(pos_001)
@@ -27,7 +26,7 @@ nbrs_01 = NearestNeighbors(n_neighbors=N, algorithm='ball_tree').fit(pos01)
 nbrs_001 = NearestNeighbors(n_neighbors=N, algorithm='ball_tree').fit(pos001)
 nbrs_0001 = NearestNeighbors(n_neighbors=N, algorithm='ball_tree').fit(pos0001)
 
-distances_f01, indices_f01 = nbrs_001.kneighbors(posf01)
+distances_f01, indices_f01 = nbrs_f01.kneighbors(posf01)
 distances_01, indices_01 = nbrs_01.kneighbors(pos01)
 distances_001, indices_001 = nbrs_001.kneighbors(pos001)
 distances_0001, indices_0001 = nbrs_0001.kneighbors(pos0001)
@@ -38,31 +37,30 @@ indices_001 = indices_001*(distances_001 < 1.5)
 indices_0001 = indices_0001*(distances_0001 < 1.5)
 
 #%%
+counter_f01 = np.zeros(N)
 counter_01 = np.zeros(N)
 counter_001 = np.zeros(N)
 counter_0001 = np.zeros(N)
-counter_f01 = np.zeros(N)
 
 # for n in range(0,steps):
 for i in range(0,N):
     for j in range(0,N):
+        counter_f01[i] += 1*(indices_f01[i,j] != 0)
         counter_01[i] += 1*(indices_01[i,j] != 0)
         counter_001[i] += 1*(indices_001[i,j] != 0)
         counter_0001[i] += 1*(indices_0001[i,j] != 0)
-        counter_f01[i] += 1*(indices_f01[i,j] != 0)
 
 # %% probability
 
 def probability(counts):
     a = Counter(counts)
-    p0 = a[0]/N
     p1 = a[1]/N
     p2 = a[2]/N
     p3 = a[3]/N
     p4 = a[4]/N
     p5 = a[5]/N
     
-    prob = np.array([p0, p1, p2, p3, p4, p5])
+    prob = np.array([p1, p2, p3, p4, p5])
     
     return prob
 
@@ -73,7 +71,7 @@ probability_f01 = probability(counter_f01)
 
 #%%
 f = 14
-x1 = np.array([0,1,2,3,4,5])
+x1 = np.array([1,2,3,4,5])
 barWidth = 0.20
 x2 = [x + barWidth for x in x1]
 x3 = [x + barWidth for x in x2]
@@ -82,15 +80,17 @@ plt.cla()
 plt.clf()
 
 plt.bar(x1, probability_f01, hatch ="/", label = '$FM, \ell = 0.1$', color = 'black', width = barWidth)
-plt.bar(x2, probability_01, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.1$', color = 'maroon', width = barWidth)
+plt.bar(x2, probability_01, edgecolor = 'w', hatch = "//", label = '$CM, \ell H = 0.1$', color = 'maroon', width = barWidth)
 plt.bar(x3, probability_001, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.01$', color = 'coral', width = barWidth)
-plt.bar(x4, probability_0001, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.001$', color = 'sandybrown', width = barWidth)
+# plt.bar(x4, probability_0001, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.001$', color = 'sandybrown', width = barWidth)
 plt.legend(fontsize = f-2, loc = 'upper right')
 plt.xlabel('Number of neighbors, N', fontsize = f)
+plt.xlim(0.5, 6)
 plt.ylabel('$p(N)$', fontsize = f)
-plt.xticks([r + 0.3 for r in range(len(x1))], 
-        ['0', '1', '2', '3', '4', '5'])
-plt.savefig('Nearest Neighbor Analysis, N625_T1500.png', dpi = 300, bbox_inches = 'tight')
+plt.xticks([r + 1.25 for r in range(len(x1))], 
+        ['1', '2', '3', '4', '5'])
+save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Complex Fluids Group/Fizza/Seattle/Mixing/'
+plt.savefig(save_path + 'Nearest Neighbor Analysis, N625_no 0001.png', dpi = 300, bbox_inches = 'tight')
 plt.show()
 
 #%% poisson fit
@@ -123,9 +123,9 @@ np.allclose(x, poisson.ppf(prob, mu))
 import seaborn as sns
 from fitter import Fitter, get_common_distributions, get_distributions
 
-f = Fitter(counter_01,
+f = Fitter(probability_01,
            distributions=["burr",
-                          "cauchy"])
+                          "cauchy",
+                          "poisson"])
 f.fit()
 f.summary()
-
