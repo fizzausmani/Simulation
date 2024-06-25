@@ -30,7 +30,6 @@ for i in range(0, N):
     pos = np.roll(pos, 1, axis=1)
     p = np.roll(p, 1, axis=1)
 
-# Optionally, normalize bin counts by N
 bin_counts = bin_counts/N
 
 # %%
