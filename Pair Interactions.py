@@ -4,32 +4,36 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 #%%
-pos = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic pos.npy')[:,:,-1]
-p = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic p.npy')[:,:,-1]
+pos = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic pos.npy')[:,:,-1]
+p = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic p.npy')[:,:,-1]
 
 #%% pair interactions
-N = pos.shape[1]
-bins = np.array([0,1,2,3])
-bin_counts = np.zeros(len(bins) - 1)
+N = np.shape(pos[1])
+rfx=[]
+rfy=[]
 
 for i in range(0, N):
-    origin = np.abs(pos[:, 0]) * np.abs(p[:, 0])
-    origin = origin[:, np.newaxis]* np.ones([624])
-    p_origin = p[:, 0]
-    p_origin = p_origin[:, np.newaxis] * np.ones([624])
-    r = pos[:, 1:] - origin
-    rdotp = np.dot(np.transpose(r), p_origin)
-    rdotp = rdotp[:, np.newaxis]  
-    rdotpp = r * rdotp
-    rabs = r - rdotpp
-    r_scalar = np.sqrt(rabs[0, :]**2 + rabs[1, :]**2)
-    r_scalar = r_scalar * (r_scalar < 3)
-    bin_indices = np.digitize(r_scalar, bins)
-    for j in range(1, len(bins)):
-        bin_counts[j-1] += np.sum(bin_indices == j)
+    origin = (pos[:, 0]) 
+    origin = origin[:, np.newaxis]* np.ones([N])
+    p_origin = (p[:, 0])
+    p_origin = p_origin[:, np.newaxis] * np.ones([N])
+    r = pos - origin
+    x = np.dot(np.transpose(r), p_origin)
+    x = x[:, 0]  
+    rdotpp = p_origin*x
+    y_vec = r - rdotpp
+    # check = np.dot(np.transpose(rabs), p_origin)   
+    y = np.sqrt(y_vec[0, :]**2 + y_vec[1, :]**2)
+    rfx.append(np.abs(x))
+    rfy.append(y)
     pos = np.roll(pos, 1, axis=1)
     p = np.roll(p, 1, axis=1)
 
-bin_counts = bin_counts/N
+rfx = np.array(rfx)
+rfy = np.array(rfy)
 
-# %%
+rfx_reshaped = np.ravel(rfx)
+rfy_reshaped = np.ravel(rfy)
+plt.scatter(rfy_reshaped, rfx_reshaped, s = 0.5, alpha = 0.5)
+plt.xlim(0,4)
+plt.ylim(0,4)
