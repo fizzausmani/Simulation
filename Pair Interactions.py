@@ -1,77 +1,94 @@
 #%%
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 
-#%%
-pos = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0l1 isotropic pos.npy')[:,:,-1]
-p = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic p.npy')[:,:,-1]
+pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd1 isotropic continued pos.npy')[:,:,-1]
+p_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd1 isotropic continued p.npy')[:,:,-1]
+pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued 3 pos.npy')[:,:,-1]
+p_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued 3 p.npy')[:,:,-1]
+pos_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.01 isotropic continued 3 pos.npy')[:,:,-1]
+p_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.01 isotropic continued 3 p.npy')[:,:,-1]
 
-N = pos.shape[1]
-rfx=[]
-rfy=[]
+def pair_coords(pos,p):
+    N = pos.shape[1]
+    rfx=[]
+    rfy=[]
 
-for i in range(0, N):
-    origin = (pos[:, 0]) 
-    origin = origin[:, np.newaxis]* np.ones([N])
-    p_origin = (p[:, 0])
-    p_origin = p_origin[:, np.newaxis] * np.ones([N])
-    r = pos - origin
-    x = np.dot(np.transpose(r), p_origin)
-    x = x[:, 0]  
-    rdotpp = p_origin*x
-    y_vec = r - rdotpp
-    # check = np.dot(np.transpose(rabs), p_origin)   
-    y = np.sqrt(y_vec[0, :]**2 + y_vec[1, :]**2)
-    rfx.append(np.abs(x))
-    rfy.append(y)
-    pos = np.roll(pos, 1, axis=1)
-    p = np.roll(p, 1, axis=1)
+    for i in range(0, N):
+        origin = (pos[:, 0]) 
+        origin = origin[:, np.newaxis]* np.ones([N])
+        p_origin = (p[:, 0])
+        p_origin = p_origin[:, np.newaxis] * np.ones([N])
+        r = pos - origin
+        x = np.dot(np.transpose(r), p_origin)
+        x = x[:, 0]  
+        rdotpp = p_origin*x
+        y_vec = r - rdotpp
+        # check = np.dot(np.transpose(rabs), p_origin)   
+        y = np.sqrt(y_vec[0, :]**2 + y_vec[1, :]**2)
+        rfx.append(np.abs(x))
+        rfy.append(y)
+        pos = np.roll(pos, 1, axis=1)
+        p = np.roll(p, 1, axis=1)
 
-rfx = np.array(rfx)
-rfy = np.array(rfy)
+    rfx = np.array(rfx)
+    rfy = np.array(rfy)
+    return rfx, rfy
 
-rfx_reshaped = np.ravel(rfx)
-rfy_reshaped = np.ravel(rfy)
-plt.scatter(rfy_reshaped, rfx_reshaped, s = 0.5, alpha = 0.5)
-plt.xlim(0,4)
-plt.ylim(0,4)
+def binning(x,y):
+    x_reshaped = np.ravel(x)
+    y_reshaped = np.ravel(y)
 
-# Assuming rfx_reshaped and rfy_reshaped are defined as in the excerpt
+    binedges_x = np.linspace(0, 4, 101)
+    binedges_y = np.linspace(0, 4, 101) 
 
-# 1. Define the bin edges
-bin_edges_x = np.linspace(1.5, 4, num=200)  # 20 bins from 0 to 4 for x
-bin_edges_y = np.linspace(1.5, 4, num=200)  # 20 bins from 0 to 4 for y
+    x_indices = (x_reshaped//(binedges_x[1] - binedges_x[0]))
+    y_indices = (y_reshaped//(binedges_y[1] - binedges_y[0]))
 
-# 2. Digitize the data
-# Adjust bin_indices_x and bin_indices_y to ensure they are within valid range
-bin_indices_x = np.digitize(rfx_reshaped, bin_edges_x)  # Convert to 0-based indices
-bin_indices_y = np.digitize(rfy_reshaped, bin_edges_y)
+    rf_coords = np.array([x_reshaped, y_reshaped])
+    a = [rf_coords[0,:] < 4]
+    b = [rf_coords[1,:] < 4]
+    rf_coords = rf_coords*a*b
+    mask = (rf_coords != 0).all(axis=0)
+    rf_coords_filtered = rf_coords[:,mask]
 
-bin_indices_x = np.minimum(bin_indices_x, len(bin_edges_x) - 1)  # Subtract 2 because of 0-based indexing and to stay within bounds
-bin_indices_y = np.minimum(bin_indices_y, len(bin_edges_y) - 1)
+    x_indices = (rf_coords_filtered[0,:]//(binedges_x[1] - binedges_x[0]))
+    y_indices = (rf_coords_filtered[1,:]//(binedges_y[1] - binedges_y[0]))
 
-# Continue with aggregation and visualization as before
-bin_counts = np.zeros((len(bin_edges_x), len(bin_edges_y)))
-for x_idx, y_idx in zip(bin_indices_x, bin_indices_y):
-    bin_counts[x_idx, y_idx] += 1
+    bin_counts = np.zeros([len(binedges_x), len(binedges_y)])
+    for i in range(0,x_indices.shape[0]):
+        bin_counts[int(x_indices[i]), int(y_indices[i])] += 1
+    # bin_counts = bin_counts/np.sum(bin_counts)
 
-hist, xbins, ybins = np.histogram2d(x=rfx_reshaped, y=rfy_reshaped, bins=(np.arange(0, 4, 0.02), np.arange(0, 4, 0.02)))
+    return bin_counts
 
-X, Y = np.meshgrid((xbins[:-1] + xbins[1:]) / 2, (ybins[:-1] + ybins[1:]) / 2)
-fig, ax = plt.subplots(figsize=(8, 6))
-# contour = ax.contour(X, Y, hist.T, levels=500)
-# ax.clabel(contour, inline=True, fontsize=8, fmt="%1.0f")
-vmin = 0.0
-vmax = 15
-levels = np.linspace(vmin, vmax, 200)
-contourf = ax.contourf(X, Y, hist.T, levels=levels, cmap='magma_r')  # Using 100 levels and a colormap for better visualization
-plt.colorbar(contourf, ax=ax)  # Add a colorbar to the plot
-ax.set_title('Contour Plot of Pair Interactions')
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_xlim(0, 4)
-ax.set_ylim(0, 4)
-save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Updates/Summer 2024/'
-plt.savefig(save_path + 'Pair Interactions sd01.png', bbox_inches='tight', dpi=300)
-plt.show()
+def plotting(bin_counts, sd):
+    x = np.linspace(0, 4, bin_counts.shape[0])
+    y = np.linspace(0, 4, bin_counts.shape[0]) 
+
+    plt.cla()
+    plt.clf()
+
+    contour = plt.contourf(x, y, bin_counts.T, levels = 500, cmap = 'magma_r')
+    # plt.colorbar()
+    plt.xlabel('x')
+    plt.ylabel('y')
+    cbar = plt.colorbar(contour)
+    cbar_ticks = np.int64(np.linspace(0, np.max(bin_counts), 9))
+    cbar.set_ticks(cbar_ticks)
+    
+    save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Updates/Summer 2024/'
+    plt.savefig(save_path + 'Pair Interactions sd' + str(sd) + '.png', dpi = 300, bbox_inches = 'tight')
+    plt.show()
+
+x_01, y_01 = pair_coords(pos_01, p_01)
+x_001, y_001 = pair_coords(pos_001, p_001)
+x_0001, y_0001 = pair_coords(pos_0001, p_0001)
+
+bin_01 = binning(x_01, y_01)
+bin_001 = binning(x_001, y_001)
+bin_0001 = binning(x_0001, y_0001)
+
+plotting(bin_01, 1)
+plotting(bin_001, 0.1)
+plotting(bin_0001, 0.01)

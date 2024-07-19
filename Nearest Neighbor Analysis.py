@@ -8,9 +8,9 @@ from scipy.stats import poisson, chisquare
 
 #%%
 pos_f01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/FM T5000 N625 lattice sd0.1 isotropic continued pos.npy')[:,:,-1]
-pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic continued pos.npy')[:,:,-1]
-pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued pos.npy')[:,:,-1]
-pos_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.01 isotropic continued 2 pos.npy')[:,:,-1]
+pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd1 isotropic continued pos.npy')[:,:,-1]
+pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued 3 pos.npy')[:,:,-1]
+pos_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.01 isotropic continued 3 pos.npy')[:,:,-1]
 ic = pd.read_csv('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic ic.csv')
 
 N = int(ic.loc[4][1])
@@ -82,15 +82,15 @@ plt.clf()
 plt.bar(x1, probability_f01, hatch ="/", label = '$FM, \ell = 0.1$', color = 'black', width = barWidth)
 plt.bar(x2, probability_01, edgecolor = 'w', hatch = "//", label = '$CM, \ell H = 0.1$', color = 'maroon', width = barWidth)
 plt.bar(x3, probability_001, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.01$', color = 'coral', width = barWidth)
-# plt.bar(x4, probability_0001, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.001$', color = 'sandybrown', width = barWidth)
+plt.bar(x4, probability_0001, edgecolor = 'k', hatch = "//", label = '$CM, \ell H = 0.001$', color = 'sandybrown', width = barWidth)
 plt.legend(fontsize = f-2, loc = 'upper right')
 plt.xlabel('Number of neighbors, N', fontsize = f)
 plt.xlim(0.5, 6)
 plt.ylabel('$p(N)$', fontsize = f)
 plt.xticks([r + 1.25 for r in range(len(x1))], 
         ['1', '2', '3', '4', '5'])
-save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Complex Fluids Group/Fizza/Seattle/Mixing/'
-plt.savefig(save_path + 'Nearest Neighbor Analysis, N625_no 0001.png', dpi = 300, bbox_inches = 'tight')
+save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Updates/Summer 2024/'
+plt.savefig(save_path + 'Nearest Neighbor Analysis, N625.png', dpi = 300, bbox_inches = 'tight')
 plt.show()
 
 #%% poisson fit

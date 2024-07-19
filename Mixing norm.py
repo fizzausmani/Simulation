@@ -8,21 +8,21 @@ import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 
 #%% Importing concentration data
-path_f1000 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/10x10/sd1000'
-path_f10 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/10x10/sd10'
-path_f1 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/10x10/sd1'
-path_f01 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/10x10/fsd01'
-path_c01 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/10x10/csd01'
-path_c1 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/10x10/csd1'
+path_f1000 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP16/Mixing/sd1000'
+path_f10 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/sd10'
+path_f1 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/sd1'
+path_f01 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/fsd01'
+# path_c01 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/csd01'
+# path_c1 = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Full Results/SP8/Mixing/csd1'
 
-preamble = 'AD T1000 dt0.05 SP8 conc'
+preamble = 'AD T1000 dt0.05 SP16 conc'
 pattern = preamble + '*.npy'
 c_f1000 = glob.glob(f'{path_f1000}/{pattern}')
 c_f10 = glob.glob(f'{path_f10}/{pattern}')
 c_f1 = glob.glob(f'{path_f1}/{pattern}')
 c_f01 = glob.glob(f'{path_f01}/{pattern}')
-c_c01 = glob.glob(f'{path_c01}/{pattern}')
-c_c1 = glob.glob(f'{path_c1}/{pattern}')
+# c_c01 = glob.glob(f'{path_c01}/{pattern}')
+# c_c1 = glob.glob(f'{path_c1}/{pattern}')
 
 #%% Initiation
 steps1 = 1000
