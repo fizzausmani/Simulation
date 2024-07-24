@@ -2,6 +2,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+pos0 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic pos.npy')[:,:,0]
+p0 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd1 isotropic p.npy')[:,:,0]
 pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd1 isotropic continued pos.npy')[:,:,-1]
 p_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd1 isotropic continued p.npy')[:,:,-1]
 pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued 3 pos.npy')[:,:,-1]
@@ -39,8 +41,8 @@ def binning(x,y):
     x_reshaped = np.ravel(x)
     y_reshaped = np.ravel(y)
 
-    binedges_x = np.linspace(0, 4, 101)
-    binedges_y = np.linspace(0, 4, 101) 
+    binedges_x = np.linspace(0, 4, 51)
+    binedges_y = np.linspace(0, 4, 51) 
 
     x_indices = (x_reshaped//(binedges_x[1] - binedges_x[0]))
     y_indices = (y_reshaped//(binedges_y[1] - binedges_y[0]))
@@ -58,7 +60,7 @@ def binning(x,y):
     bin_counts = np.zeros([len(binedges_x), len(binedges_y)])
     for i in range(0,x_indices.shape[0]):
         bin_counts[int(x_indices[i]), int(y_indices[i])] += 1
-    # bin_counts = bin_counts/np.sum(bin_counts)
+    bin_counts = bin_counts/np.sum(bin_counts)
 
     return bin_counts
 
@@ -69,26 +71,39 @@ def plotting(bin_counts, sd):
     plt.cla()
     plt.clf()
 
-    contour = plt.contourf(x, y, bin_counts.T, levels = 500, cmap = 'magma_r')
+    contour = plt.contourf(x, y, bin_counts.T, levels = 5000, cmap = 'magma_r')
     # plt.colorbar()
     plt.xlabel('x')
     plt.ylabel('y')
     cbar = plt.colorbar(contour)
-    cbar_ticks = np.int64(np.linspace(0, np.max(bin_counts), 9))
+    cbar_ticks = (np.linspace(0, np.amax(bin_counts), 9))
     cbar.set_ticks(cbar_ticks)
     
     save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Updates/Summer 2024/'
-    plt.savefig(save_path + 'Pair Interactions sd' + str(sd) + '.png', dpi = 300, bbox_inches = 'tight')
+    if sd == 0:
+        plt.title('t=0')
+    elif sd == 1:
+        plt.title('Pair Interactions $\ell$H0.1')
+    elif sd == 0.1:
+        plt.title('Pair Interactions $\ell$H0.01')
+    elif sd == 0.01:
+        plt.title('Pair Interactions $\ell$H0.001')
+    plt.savefig(save_path + 'Normalised Pair Interactions sd' + str(sd) + '.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
 x_01, y_01 = pair_coords(pos_01, p_01)
 x_001, y_001 = pair_coords(pos_001, p_001)
 x_0001, y_0001 = pair_coords(pos_0001, p_0001)
+x0, y0 = pair_coords(pos0, p0)
 
 bin_01 = binning(x_01, y_01)
 bin_001 = binning(x_001, y_001)
 bin_0001 = binning(x_0001, y_0001)
+bin_0 = binning(x0, y0)
 
 plotting(bin_01, 1)
 plotting(bin_001, 0.1)
 plotting(bin_0001, 0.01)
+plotting(bin_0, 0)
+
+# %%
