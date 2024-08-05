@@ -7,10 +7,10 @@ from collections import Counter
 from scipy.stats import poisson, chisquare
 
 #%%
-pos_f01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/FM T5000 N625 lattice sd0.1 isotropic continued pos.npy')[:,:,-1]
-pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd1 isotropic continued pos.npy')[:,:,-1]
-pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued 3 pos.npy')[:,:,-1]
-pos_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.01 isotropic continued 3 pos.npy')[:,:,-1]
+pos_f01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/FM T10000 N625 lattice sd0.1 isotropic continued pos.npy')[:,:,-1]
+pos_01 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd1 isotropic continued 2 pos.npy')[:,:,-1]
+pos_001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.1 isotropic continued 4 pos.npy')[:,:,-1]
+pos_0001 = np.load('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T10000 N625 lattice sd0.01 isotropic continued 5 pos.npy')[:,:,-1]
 ic = pd.read_csv('/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Python/Stability Analysis/CM T5000 N625 lattice sd0.1 isotropic ic.csv')
 
 N = int(ic.loc[4][1])
@@ -90,8 +90,24 @@ plt.ylabel('$p(N)$', fontsize = f)
 plt.xticks([r + 1.25 for r in range(len(x1))], 
         ['1', '2', '3', '4', '5'])
 save_path = '/Users/fizzausmani/Library/CloudStorage/Box-Box/Research/Updates/Summer 2024/'
-plt.savefig(save_path + 'Nearest Neighbor Analysis, N625.png', dpi = 300, bbox_inches = 'tight')
+# plt.savefig(save_path + 'Nearest Neighbor Analysis, N625.png', dpi = 300, bbox_inches = 'tight')
 plt.show()
+
+#%%
+def counts(counts):
+    a = Counter(counts)
+    p1 = a[1]
+    p2 = a[2]
+    p3 = a[3]
+    p4 = a[4]
+    p5 = a[5]
+    
+    return np.array([p1, p2, p3, p4, p5])
+
+fitter_input_f01 = counts(counter_f01)
+fitter_input_01 = counts(counter_01)
+fitter_input_001 = counts(counter_001)
+fitter_input_0001 = counts(counter_0001)
 
 #%% poisson fit
 mu = np.mean(counter_001)  # Poisson parameter is the mean of the data
@@ -123,9 +139,34 @@ np.allclose(x, poisson.ppf(prob, mu))
 import seaborn as sns
 from fitter import Fitter, get_common_distributions, get_distributions
 
-f = Fitter(probability_01,
-           distributions=["burr",
-                          "cauchy",
-                          "poisson"])
+f = Fitter((counter_f01),
+           distributions=["gamma",
+                          "poisson",
+                          "geom"])
 f.fit()
 f.summary()
+
+#%%
+f = Fitter((counter_01),
+           distributions=["gamma",
+                          "poisson",
+                          "geom"])
+f.fit()
+f.summary()
+
+#%%
+f = Fitter((counter_001),
+           distributions=["gamma",
+                          "poisson",
+                          "geom"])
+f.fit()
+f.summary()
+#%%
+
+f = Fitter((counter_0001),
+           distributions=["gamma",
+                          "poisson",
+                          "geom"])
+f.fit()
+f.summary()
+# %%

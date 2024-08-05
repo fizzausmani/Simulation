@@ -15,6 +15,12 @@ def pair_coords(pos,p):
     N = pos.shape[1]
     rfx=[]
     rfy=[]
+    
+    mask = (pos[0, :] < 0) | (pos[1, :] < 0)
+    min_x = np.min(pos[0, mask])
+    min_y = np.min(pos[1, mask])
+    pos[0, mask] -= min_x
+    pos[1, mask] -= min_y
 
     for i in range(0, N):
         origin = (pos[:, 0]) 
@@ -41,8 +47,8 @@ def binning(x,y):
     x_reshaped = np.ravel(x)
     y_reshaped = np.ravel(y)
 
-    binedges_x = np.linspace(0, 4, 201)
-    binedges_y = np.linspace(0, 4, 201) 
+    binedges_x = np.linspace(0, 4, 101)
+    binedges_y = np.linspace(0, 4, 101) 
 
     x_indices = (x_reshaped//(binedges_x[1]))
     y_indices = (y_reshaped//(binedges_y[1]))
@@ -68,8 +74,10 @@ def plotting(bin_counts, sd):
     x = np.linspace(0, 4, bin_counts.shape[0])
     y = np.linspace(0, 4, bin_counts.shape[0]) 
 
-    plt.cla()
-    plt.clf()
+    # plt.cla()
+    # plt.clf()
+    
+    plt.figure()
 
     contour = plt.contourf(x, y, bin_counts.T, levels = 1000, cmap = 'magma_r')
     # plt.colorbar()
@@ -88,7 +96,7 @@ def plotting(bin_counts, sd):
         plt.title('Pair Interactions $\ell$H0.01')
     elif sd == 0.01:
         plt.title('Pair Interactions $\ell$H0.001')
-    plt.savefig(save_path + 'Normalised Pair Interactions sd' + str(sd) + '.png', dpi = 300, bbox_inches = 'tight')
+    plt.savefig(save_path + 'Normalised Positive Only Pair Interactions sd' + str(sd) + '.png', dpi = 300, bbox_inches = 'tight')
     plt.show()
 
 x_01, y_01 = pair_coords(pos_01, p_01)
@@ -105,3 +113,4 @@ plotting(bin_01, 1)
 plotting(bin_001, 0.1)
 plotting(bin_0001, 0.01)
 plotting(bin_0, 0)
+# %%
